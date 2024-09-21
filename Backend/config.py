@@ -1,5 +1,5 @@
 class Config:
-    SERVER = 'loalhost\SQLEXPRESS'  # Replace with your server name
+    SERVER = 'GY7QD63'  # Replace with your server name
     DATABASE = 'SecureStorageDB'
     USERNAME = 'sa'  # Replace with your SQL Server username
     PASSWORD = 'SAPB1Admin'  # Replace with your SQL Server password
@@ -9,4 +9,6 @@ class Config:
     DB3 = 'SecureStorageDB3'
     DB4 = 'SecureStorageDB4'
     DB5 = 'SecureStorageDB5'
+    CONNECTION_STRING = f'DRIVER={{SQL Server}};Server=GY7QD63;UID=sa;PWD=SAPB1Admin;'
+        
     

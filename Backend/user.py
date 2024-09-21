@@ -5,18 +5,18 @@ from config import Config  # Import the configuration
 
 class User:
     def __init__(self):
-        connection_string = f'DRIVER={{SQL Server}};Server=localhost\\SQLEXPRESS;DATABASE={Config.DATABASE};Trusted_Connection=True'
+        connection_string = f'{Config.CONNECTION_STRING};DATABASE={Config.DATABASE}'
         self.conn = pyodbc.connect(connection_string)
         self.cursor = self.conn.cursor()
 
-    def create_user(self, firstname, lastname, username, password, email):
+    def create_user(self, firstname, lastname, password, email):
         # salt = os.urandom(16).hex()
         # password_hash = generate_password_hash(password)
         password_hash = hashlib.sha256(password.encode('utf-8')).digest()
         try:
             self.cursor.execute('''
-                EXEC sp_CreateUser @FirstName=?, @LastName=?, @Username=?, @PasswordHash=?, @Email=?
-            ''', (firstname, lastname, username, password_hash, email))
+                EXEC sp_CreateUser @FirstName=?, @LastName=?, @PasswordHash=?, @Email=?
+            ''', (firstname, lastname, password_hash, email))
             
             self.conn.commit()            
             return {"message": "User registered successfully!"}, 201
@@ -27,6 +27,34 @@ class User:
             return {"error": str(e)}, 500
         
 
+    def update_user(self, firstname, lastname, email):
+        try:
+            self.cursor.execute('''
+                EXEC sp_UpdateUser @FirstName=?, @LastName=?, @Email=?
+            ''', (firstname, lastname, email))
+            
+            self.conn.commit()            
+            return {"message": "User updated successfully!"}, 201
+            
+        except pyodbc.Error as e:
+            if "50001" in str(e):
+                return {"error": "Username already exists"}, 400
+            return {"error": str(e)}, 500
+                
+
+    def update_password(self, password, email):
+        password_hash = hashlib.sha256(password.encode('utf-8')).digest()
+        try:
+            self.cursor.execute('''
+                EXEC sp_UpdatePassword @PasswordHash=?, @Email=?
+            ''', (password_hash, email))
+            
+            self.conn.commit()            
+            return {"message": "Password reset successfully!"}, 201
+            
+        except pyodbc.Error as e:
+            return {"error": str(e)}, 500
+        
     def login_user(self, email, password):
         try:
             self.cursor.execute('''

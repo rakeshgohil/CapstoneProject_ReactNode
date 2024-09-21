@@ -19,15 +19,42 @@ def register_user():
     data = request.json
     firstname = data.get('firstname')
     lastname = data.get('lastname')
-    username = data.get('username')
     password = data.get('password')
     email = data.get('email')
     
-    if not firstname or not lastname or not username or not password or not email:
+    if not firstname or not lastname or not password or not email:
         return jsonify({"error": "All fields are required"}), 400
 
-    response, status = user_model.create_user(firstname, lastname, username, password, email)
+    response, status = user_model.create_user(firstname, lastname, password, email)
     return jsonify(response), status
+
+
+@app.route('/updateuser', methods=['POST'])
+def update_user():
+    data = request.json
+    firstname = data.get('firstname')
+    lastname = data.get('lastname')
+    email = data.get('email')
+    
+    if not firstname or not lastname or not email:
+        return jsonify({"error": "All fields are required"}), 400
+
+    response, status = user_model.update_user(firstname, lastname, email)
+    return jsonify(response), status
+
+
+@app.route('/updatepassword', methods=['POST'])
+def update_password():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+    
+    if not password or not email:
+        return jsonify({"error": "All fields are required"}), 400
+
+    response, status = user_model.update_password(password, email)
+    return jsonify(response), status
+
 
 @app.route('/login', methods=['POST'])
 def login_user():

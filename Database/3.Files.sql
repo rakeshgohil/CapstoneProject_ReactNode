@@ -6,8 +6,8 @@ CREATE TABLE Files (
     FileName NVARCHAR(255),
     FilePath NVARCHAR(255),
     UploadedBy INT FOREIGN KEY REFERENCES Users(UserID),  -- User who uploaded the file
-    UploadedAt DATETIME DEFAULT GETDATE()
-);
-
-ALTER TABLE Files ADD [Secret] NVARCHAR(255)
-ALTER TABLE Files ADD [SharedUserIDs] NVARCHAR(255)
+    UploadedAt DATETIME DEFAULT GETDATE(),
+	[Secret] NVARCHAR(255),
+	[SharedUserIDs] NVARCHAR(255)
+)
+GO

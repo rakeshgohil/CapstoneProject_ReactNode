@@ -10,7 +10,7 @@ from config import Config
 class FileUpload:
     def __init__(self):
         self.databases = [Config.DB1, Config.DB2, Config.DB3, Config.DB4, Config.DB5]  # List of databases
-        connection_string = f'DRIVER={{SQL Server}};Server=localhost\\SQLEXPRESS;DATABASE={Config.DATABASE};Trusted_Connection=True'
+        connection_string = f'{Config.CONNECTION_STRING};DATABASE={Config.DATABASE}'
         self.conn = pyodbc.connect(connection_string)
         self.cursor = self.conn.cursor()
         if not os.path.exists(Config.UPLOAD_FOLDER):
@@ -30,7 +30,7 @@ class FileUpload:
             secret = ''.join(secrets.choice(characters) for _ in range(8))
             
             cleaned_userids = userids.replace("[", "").replace("]", "").replace("'", "").replace('"', "")
-            connection_string = f'DRIVER={{SQL Server}};Server=localhost\\SQLEXPRESS;DATABASE={Config.DATABASE};Trusted_Connection=True'
+            connection_string = f'{Config.CONNECTION_STRING};DATABASE={Config.DATABASE}'
             self.conn = pyodbc.connect(connection_string)
             self.cursor = self.conn.cursor()
 
@@ -81,9 +81,7 @@ class FileUpload:
 
             # Store the secret parts in the FileSecrets table
             for i in range(5):
-                print(f'share {i}')
-                connection_string = f'DRIVER={{SQL Server}};Server=localhost\\SQLEXPRESS;DATABASE={self.databases[i]};Trusted_Connection=True'
-                print(connection_string)
+                connection_string = f'{Config.CONNECTION_STRING};DATABASE={self.databases[i]}' 
                 self.conn = pyodbc.connect(connection_string)
                 self.cursor = self.conn.cursor()
 

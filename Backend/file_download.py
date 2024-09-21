@@ -7,7 +7,7 @@ from config import Config
 class FileDownload:
     def __init__(self):
         self.databases = [Config.DB1, Config.DB2, Config.DB3, Config.DB4, Config.DB5]  # List of databases
-        connection_string = f'DRIVER={{SQL Server}};Server=localhost\\SQLEXPRESS;DATABASE={Config.DATABASE};Trusted_Connection=True'
+        connection_string = f'{Config.CONNECTION_STRING};DATABASE={Config.DATABASE}'
         self.conn = pyodbc.connect(connection_string)
         self.cursor = self.conn.cursor()
 
@@ -19,8 +19,8 @@ class FileDownload:
             files =[]
             file_secrets = []
             for i in range(5):
-                connection_string = f'DRIVER={{SQL Server}};Server=localhost\\SQLEXPRESS;DATABASE={self.databases[i]};Trusted_Connection=True'
-                
+                connection_string = f'{Config.CONNECTION_STRING};DATABASE={self.databases[i]}'
+        
                 self.conn = pyodbc.connect(connection_string)
                 self.cursor = self.conn.cursor()
 
@@ -41,8 +41,7 @@ class FileDownload:
                     
             if fileIds:
                 placeholders = ','.join(['?'] * len(fileIds))
-                connection_string = f'DRIVER={{SQL Server}};Server=localhost\\SQLEXPRESS;DATABASE={Config.DATABASE};Trusted_Connection=True'
-                
+                connection_string = f'{Config.CONNECTION_STRING};DATABASE={Config.DATABASE}'
                 self.conn = pyodbc.connect(connection_string)
                 self.cursor = self.conn.cursor()
                 

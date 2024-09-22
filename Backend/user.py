@@ -1,3 +1,4 @@
+import bcrypt
 import pyodbc
 from werkzeug.security import generate_password_hash, check_password_hash
 import hashlib
@@ -11,8 +12,7 @@ class User:
 
     def create_user(self, firstname, lastname, password, email):
         # salt = os.urandom(16).hex()
-        # password_hash = generate_password_hash(password)
-        password_hash = hashlib.sha256(password.encode('utf-8')).digest()
+        password_hash = self.hash_password(password)
         try:
             self.cursor.execute('''
                 EXEC sp_CreateUser @FirstName=?, @LastName=?, @PasswordHash=?, @Email=?
@@ -41,7 +41,7 @@ class User:
                 
 
     def update_password(self, password, email):
-        password_hash = hashlib.sha256(password.encode('utf-8')).digest()
+        password_hash = self.hash_password(password)
         try:
             self.cursor.execute('''
                 EXEC sp_UpdatePassword @PasswordHash=?, @Email=?
@@ -61,10 +61,10 @@ class User:
             result = self.cursor.fetchone()
             
             if result:
-                stored_password_hash = result[0]
-                provided_password_hash = hashlib.sha256(password.encode('utf-8')).digest()
+                stored_hashed_password = result[0]  # No need to encode
+
                 
-                if provided_password_hash == stored_password_hash:
+                if self.verify_password(password.encode('utf-8'), stored_hashed_password):
                     return {"message": "Login successful!", "userid": result[1]}, 200
                 else:
                     return {"error": "Invalid email1 or password."}, 401
@@ -83,3 +83,13 @@ class User:
         
         except pyodbc.Error as e:
             raise Exception(f"Database error: {str(e)}")
+        
+    def hash_password(self, password):
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        return hashed_password
+    
+    def verify_password(self, plain_password, hashed_password):
+        if isinstance(plain_password, str):
+            plain_password = plain_password.encode('utf-8')
+        return bcrypt.checkpw(plain_password, hashed_password)

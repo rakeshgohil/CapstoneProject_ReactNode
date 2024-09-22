@@ -56,23 +56,29 @@ class User:
     def login_user(self, email, password):
         try:
             self.cursor.execute('''
-                SELECT PasswordHash, UserId FROM Users WHERE email=?
+                SELECT PasswordHash, UserId, FirstName, LastName FROM Users WHERE email=?
             ''', (email,))
             result = self.cursor.fetchone()
             
             if result:
-                stored_hashed_password = result[0]  # No need to encode
+                stored_hashed_password = result[0]
 
-                
                 if self.verify_password(password.encode('utf-8'), stored_hashed_password):
-                    return {"message": "Login successful!", "userid": result[1]}, 200
+                    # Return UserId, FirstName, and LastName upon successful login
+                    return {
+                        "message": "Login successful!",
+                        "userid": result[1],
+                        "firstname": result[2],
+                        "lastname": result[3]
+                    }, 200
                 else:
-                    return {"error": "Invalid email1 or password."}, 401
+                    return {"error": "Invalid email or password."}, 401
             else:
-                return {"error": "Invalid email2 or password."}, 401
+                return {"error": "Invalid email or password."}, 401
 
         except pyodbc.Error as e:
             return {"error": str(e)}, 500
+
     
     def get_all_users(self):
         """Fetch all users from the database"""

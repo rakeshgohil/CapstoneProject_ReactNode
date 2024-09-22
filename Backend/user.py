@@ -23,7 +23,7 @@ class User:
             
         except pyodbc.Error as e:
             if "50001" in str(e):
-                return {"error": "Username or Email already exists"}, 400
+                return {"error": "Email already exists"}, 400
             return {"error": str(e)}, 500
         
 
@@ -37,8 +37,6 @@ class User:
             return {"message": "User updated successfully!"}, 201
             
         except pyodbc.Error as e:
-            if "50001" in str(e):
-                return {"error": "Username already exists"}, 400
             return {"error": str(e)}, 500
                 
 
@@ -79,9 +77,9 @@ class User:
     def get_all_users(self):
         """Fetch all users from the database"""
         try:
-            self.cursor.execute('SELECT UserID, FirstName, LastName, Username FROM Users')
+            self.cursor.execute('SELECT UserID, FirstName, LastName FROM Users')
             users = self.cursor.fetchall()
-            return [{"id": user[0], "firstname": user[1], "lastname": user[2], "name": user[3]} for user in users]
+            return [{"id": user[0], "firstname": user[1], "lastname": user[2]} for user in users]
         
         except pyodbc.Error as e:
             raise Exception(f"Database error: {str(e)}")

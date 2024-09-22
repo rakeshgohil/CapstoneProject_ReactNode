@@ -92,20 +92,19 @@
     return hasUpperCase && hasLowerCase && hasSpecialCharacter && hasMinLength;
   };
 
-  export const signUp = async ({ email, password, firstname, lastname, username }) => {
+  export const signUp = async ({ email, password, firstname, lastname }) => {
     const params = {
       email,
       password,
       firstname,
-      lastname,
-      username
+      lastname
     };
 
     try {
       // if (isPasswordValid(password)) {
         
         console.log('Rwara11111')
-        if (firstname && lastname && username && password && email) {
+        if (firstname && lastname && password && email) {
           try {
             const response = await axios.post('http://localhost:5000/register', params);
             

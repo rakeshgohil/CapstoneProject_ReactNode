@@ -122,3 +122,21 @@ class FileDownload:
         else:
             raise Exception("File not found")
         
+    
+    def get_file_secret_foruser(self, file_id, user_id):
+        query = '''
+            SELECT Secret FROM Files WHERE FileID = ? AND UserID = ?
+        '''
+    
+        for i in range(5):
+            connection_string = f'{Config.CONNECTION_STRING};DATABASE={self.databases[i]}'
+    
+            self.conn = pyodbc.connect(connection_string)
+            self.cursor = self.conn.cursor()
+
+            self.cursor.execute(query, file_id, user_id)
+            result = self.cursor.fetchone()
+
+            if result:
+                return result[0]
+        

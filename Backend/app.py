@@ -127,5 +127,13 @@ def download_file(file_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
+@app.route('/getusersecret/<int:file_id>/<int:user_id>', methods=['GET'])
+def get_user_secert(file_id, user_id):
+    try:
+        return file_download.get_file_secret_foruser(file_id, user_id)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500    
+    
 if __name__ == '__main__':
     app.run(debug=True)

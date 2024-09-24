@@ -8,6 +8,8 @@ CREATE TABLE Files (
     UploadedBy INT FOREIGN KEY REFERENCES Users(UserID),  -- User who uploaded the file
     UploadedAt DATETIME DEFAULT GETDATE(),
 	[Secret] NVARCHAR(255),
-	[SharedUserIDs] NVARCHAR(255)
+	[SharedUserIDs] NVARCHAR(255),
+	EncryptionKey NVARCHAR(MAX), 
+	HmacKey NVARCHAR(MAX)
 )
 GO

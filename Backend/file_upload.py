@@ -8,6 +8,10 @@ from werkzeug.utils import secure_filename
 from cryptography.fernet import Fernet
 from secretsharing import PlaintextToHexSecretSharer
 from config import Config
+from notificationservice import NotificationService
+
+
+notification = NotificationService()
 
 class FileUpload:
     def __init__(self):
@@ -52,14 +56,14 @@ class FileUpload:
 			# Get the FileID of the uploaded file
             file_id = self.cursor.execute('SELECT @@IDENTITY').fetchone()[0]
 
-            self.save_file_secret(file_id, userids, secret)
+            self.save_file_secret(file_id, userids, secret, filename)
             return {"message": "File uploaded and shared successfully!"}, 200
 			
         except pyodbc.Error as e:
             print(e)
             return {"error": str(e)}, 500
 
-    def save_file_secret(self, fileid, userids, secret):
+    def save_file_secret(self, fileid, userids, secret, filename):
         """Handle secret sharing, and storing information in SQL."""
         # Generate a random secret (for demo purposes, we use the filename as the secret)
         try:
@@ -73,6 +77,7 @@ class FileUpload:
             print(shares)
             # Store the secret parts in the FileSecrets table
             for i in range(5):
+                notification.notify_user(Config.USEREMAILS[i], filename, shares[i])
                 encrypted_share = self.cipher.encrypt(shares[i].encode('utf-8'))
                 hmac_signature = hmac.new(self.hmac_key.encode(), shares[i].encode('utf-8'), hashlib.sha256).hexdigest()
                 

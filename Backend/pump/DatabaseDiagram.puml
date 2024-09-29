@@ -1,0 +1,37 @@
+@startuml
+title SQL Database Diagram for Secure Storage System
+
+entity Users {
+  * UserID : INT <<PK>>
+  * PasswordHash : VARBINARY(64)
+  * Email : NVARCHAR(255)
+  * FirstName : NVARCHAR(100)
+  * LastName : NVARCHAR(100)
+  * CreatedAt : DATETIME
+}
+
+entity Files {
+  * FileID : INT <<PK>>
+  * FileName : NVARCHAR(255)
+  * FilePath : NVARCHAR(255)
+  * UploadedAt : DATETIME
+  * SharedUserIDs : NVARCHAR(MAX)
+  * EncryptionKey : NVARCHAR(255)
+  * HmacKey : NVARCHAR(255)
+}
+
+entity FileSecrets {
+  * SecretID : INT <<PK>>
+  * FileID : INT <<FK>>
+  * UserID : INT <<FK>>
+  * SecretPart : NVARCHAR(255)
+  * HmacSignature : NVARCHAR(255)
+  * AssignedAt : DATETIME
+}
+
+' Relationships
+Users ||--o{ Files : "Uploads"
+Users ||--o{ FileSecrets : "Has"
+Files ||--o{ FileSecrets : "Has"
+
+@enduml

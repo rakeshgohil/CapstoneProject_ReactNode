@@ -166,12 +166,7 @@ export function FileManagerNewFolderDialog({
                   onChange={(e) => handleUserSelection(user.id, e)}
                 />
                 {/* <label htmlFor={`user_${user.id}`}>{user.name}</label> */}
-<<<<<<< Updated upstream
-                <Typography variant="subtitle2" htmlFor={`user_${user.id}`}>{user.firstname} {user.lastname}</Typography>
-=======
                 <Typography variant="subtitle2" htmlFor={`user_${user.id}`}>{user.firstname}-{user.lastname}</Typography>
->>>>>>> Stashed changes
-
               </div>
             ))
           ) : (

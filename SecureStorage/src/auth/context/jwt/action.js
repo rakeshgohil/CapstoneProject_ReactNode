@@ -4,11 +4,8 @@
   // const cors = require('cors');
   import { setSession,setError,setErrorMessage} from './utils';
   import { STORAGE_KEY } from './constant';
-<<<<<<< Updated upstream
   import CryptoJS from 'crypto-js';
-=======
   
->>>>>>> Stashed changes
 
   /** **************************************
    * Sign in
@@ -100,7 +97,6 @@
   };
 
   export const signUp = async ({ email, password, firstname, lastname }) => {
-<<<<<<< Updated upstream
     
     const hashedPassword = CryptoJS.SHA256(password).toString();
     const params = {
@@ -108,13 +104,6 @@
       password: hashedPassword,
       firstname: firstname,
       lastname: lastname
-=======
-    const params = {
-      email,
-      password,
-      firstname,
-      lastname
->>>>>>> Stashed changes
     };
 
     try {

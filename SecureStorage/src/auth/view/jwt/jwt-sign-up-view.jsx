@@ -53,17 +53,10 @@ export function JwtSignUpView() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const defaultValues = {
-<<<<<<< Updated upstream
-    firstName: 'test',
-    lastName: 'user',
-    email: 'test1@gmail.com',
-    password: '123456',
-=======
     firstName: '',
     lastName: '',
     email: '',
     password: '',
->>>>>>> Stashed changes
   };
 
   const methods = useForm({

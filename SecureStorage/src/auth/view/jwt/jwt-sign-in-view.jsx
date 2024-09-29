@@ -50,14 +50,10 @@ export function JwtSignInView() {
 
   const password = useBoolean();
 
-<<<<<<< Updated upstream
   const defaultValues = {
     email: '',
     password: '',
   };
-=======
-
->>>>>>> Stashed changes
 
   const methods = useForm({
     resolver: zodResolver(SignInSchema),

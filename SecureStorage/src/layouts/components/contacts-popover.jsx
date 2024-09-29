@@ -1,6 +1,9 @@
 'use client';
 
 import { m } from 'framer-motion';
+import { useRouter } from 'src/routes/hooks';
+import { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
@@ -18,8 +21,29 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export function ContactsPopover({ data = [], sx, ...other }) {
+export function ContactsPopover( ) {
   const popover = usePopover();
+  const [data, setData] = useState([]);
+  useEffect(() => {
+ 
+      fetchUsers(); // Fetch users when dialog is opened
+  
+  },[]);
+  const router = useRouter();
+
+
+  // Fetch users from the /allusers API
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/users');
+      
+      setData(response.data); // Assuming API returns users as an array
+      console.log(data,"data1");
+      
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
 
   return (
     <>
@@ -29,11 +53,11 @@ export function ContactsPopover({ data = [], sx, ...other }) {
         whileHover="hover"
         variants={varHover(1.05)}
         onClick={popover.onOpen}
-        sx={{
-          ...(popover.open && { bgcolor: (theme) => theme.vars.palette.action.selected }),
-          ...sx,
-        }}
-        {...other}
+        // sx={{
+        //   ...(popover.open && { bgcolor: (theme) => theme.vars.palette.action.selected }),
+        //   ...sx,
+        // }}
+        // {...other}
       >
         <SvgIcon>
           {/* https://icon-sets.iconify.design/solar/users-group-rounded-bold-duotone/  */}
@@ -64,7 +88,7 @@ export function ContactsPopover({ data = [], sx, ...other }) {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 sx={{ mr: 2 }}
               >
-                <Avatar alt={contact.name} src={contact.avatarUrl} />
+                <Avatar alt={contact.firstname }  src={contact.avatarUrl} />
               </Badge>
 
               <ListItemText

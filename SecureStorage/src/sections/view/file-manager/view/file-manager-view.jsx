@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -28,6 +28,8 @@ import { FileManagerFilters } from '../file-manager-filters';
 import { FileManagerGridView } from '../file-manager-grid-view';
 import { FileManagerFiltersResult } from '../file-manager-filters-result';
 import { FileManagerNewFolderDialog } from '../file-manager-new-folder-dialog';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 
 // ----------------------------------------------------------------------
 
@@ -43,6 +45,7 @@ export function FileManagerView() {
   const [view, setView] = useState('list');
 
   const [tableData, setTableData] = useState(_allFiles);
+  const [search, setSearch] = useState('');
 
   const filters = useSetState({
     name: '',
@@ -152,7 +155,21 @@ export function FileManagerView() {
         </Stack>
 
         <Stack spacing={2.5} sx={{ my: { xs: 3, md: 5 } }}>
-          {renderFilters}
+          <TextField
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search..."
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ width: { xs: 1, md: 260 } }}
+          />
+
+          {/* {renderFilters} */}
 
           {canReset && renderResults}
         </Stack>
@@ -168,6 +185,8 @@ export function FileManagerView() {
                 onDeleteRow={handleDeleteItem}
                 notFound={notFound}
                 onOpenConfirm={confirm.onTrue}
+                search={search}
+                setSearch={setSearch}
               />
             ) : (
               <FileManagerGridView
@@ -182,7 +201,7 @@ export function FileManagerView() {
       </DashboardContent>
 
       <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} />
-        
+
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}

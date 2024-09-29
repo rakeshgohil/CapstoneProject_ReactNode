@@ -30,9 +30,9 @@ export function FileManagerFilters({
 }) {
   const popover = usePopover();
 
-  const renderLabel = filters.state.type.length
-    ? filters.state.type.slice(0, 2).join(',')
-    : 'All type';
+  // const renderLabel = filters.state.type.length
+  //   ? filters.state.type.slice(0, 2).join(',')
+  //   : 'All type';
 
   const handleFilterName = useCallback(
     (event) => {
@@ -91,7 +91,7 @@ export function FileManagerFilters({
 
   const renderFilterType = (
     <>
-      <Button
+      {/* <Button
         color="inherit"
         onClick={popover.onOpen}
         endIcon={
@@ -100,14 +100,14 @@ export function FileManagerFilters({
             sx={{ ml: -0.5 }}
           />
         }
-      >
-        {renderLabel}
-        {filters.state.type.length > 2 && (
+      > */}
+        {/* {renderLabel} */}
+        {/* {filters.state.type.length > 2 && (
           <Label color="info" sx={{ ml: 1 }}>
             +{filters.state.type.length - 2}
           </Label>
         )}
-      </Button>
+      </Button> */}
 
       <CustomPopover
         open={popover.open}
@@ -116,7 +116,7 @@ export function FileManagerFilters({
         slotProps={{ paper: { sx: { p: 2.5 } } }}
       >
         <Stack spacing={2.5}>
-          {/* <Box
+          <Box
             gap={1}
             display="grid"
             gridTemplateColumns={{ xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' }}
@@ -153,9 +153,9 @@ export function FileManagerFilters({
                 </CardActionArea>
               );
             })}
-          </Box> */}
+          </Box>
 
-          <Stack spacing={1.5} direction="row" alignItems="center" justifyContent="flex-end">
+          {/* <Stack spacing={1.5} direction="row" alignItems="center" justifyContent="flex-end">
             <Button variant="outlined" color="inherit" onClick={handleResetType}>
               Clear
             </Button>
@@ -163,7 +163,7 @@ export function FileManagerFilters({
             <Button variant="contained" onClick={popover.onClose}>
               Apply
             </Button>
-          </Stack>
+          </Stack> */}
         </Stack>
       </CustomPopover>
     </>
@@ -209,11 +209,11 @@ export function FileManagerFilters({
     >
       {renderFilterName}
 
-      <Stack spacing={1} direction="row" alignItems="center" justifyContent="flex-end" flexGrow={1}>
+      {/* <Stack spacing={1} direction="row" alignItems="center" justifyContent="flex-end" flexGrow={1}>
         {renderFilterDate}
 
         {renderFilterType}
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 }

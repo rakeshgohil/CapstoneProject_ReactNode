@@ -10,6 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
+import { Typography } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter, usePathname } from 'src/routes/hooks';
@@ -120,7 +121,11 @@ export function AccountDrawer({ data = [], sx, objUser, ...other }) {
                   // src={_mock.image.avatar(index + 1)}
                   onClick={() => { }}
                 />
+                <Typography variant="subtitle2" htmlFor={`user_${user.id}`}>{objUser.name}</Typography>
+
               </Tooltip>
+              
+
             }
 
             {/* {[...Array(3)].map((_, index) => (

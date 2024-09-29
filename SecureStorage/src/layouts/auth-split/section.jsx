@@ -18,7 +18,7 @@ export function Section({
   methods,
   title = 'Manage your files',
   imgUrl = `${CONFIG.assetsDir}/assets/illustrations/illustration-dashboard.webp`,
-  subtitle = 'More effectively with optimized workflows.',
+  subtitle = 'Enhancing efficiency with streamlined cloud storage solutions..',
   ...other
 }) {
   const theme = useTheme();
@@ -86,7 +86,7 @@ export function Section({
                   }),
                 }}
               >
-                <Tooltip title={option.label} placement="top">
+                {/* <Tooltip title={option.label} placement="top">
                   <Link
                     component={RouterLink}
                     href={option.path}
@@ -101,7 +101,7 @@ export function Section({
                       sx={{ width: 32, height: 32 }}
                     />
                   </Link>
-                </Tooltip>
+                </Tooltip> */}
               </Box>
             );
           })}

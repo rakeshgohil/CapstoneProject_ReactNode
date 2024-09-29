@@ -38,6 +38,7 @@ export const endpoints = {
     me: '/api/auth/me',
     signIn: '/api/auth/sign-in',
     signUp: '/api/auth/sign-up',
+    forgotPassword: '/api/auth/update-password',
   },
   mail: {
     list: '/api/mail/list',

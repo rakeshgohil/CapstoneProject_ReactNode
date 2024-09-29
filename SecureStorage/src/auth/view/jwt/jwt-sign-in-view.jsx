@@ -4,6 +4,7 @@ import { z as zod } from 'zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+// import { ForgetPasswordView } from 'src/pages/auth/ForgetPasswordView'; // Ensure the correct import path
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -24,6 +25,7 @@ import { Form, Field } from 'src/components/hook-form';
 import { useAuthContext } from '../../hooks';
 import { FormHead } from '../../components/form-head';
 import { signInWithPassword } from '../../context/jwt';
+import { toast } from 'react-toastify';
 
 // ----------------------------------------------------------------------
 
@@ -42,21 +44,24 @@ export const SignInSchema = zod.object({
 
 export function JwtSignInView() {
   const router = useRouter();
-
   const { checkUserSession } = useAuthContext();
 
   const [errorMsg, setErrorMsg] = useState('');
 
   const password = useBoolean();
 
+<<<<<<< Updated upstream
   const defaultValues = {
     email: '',
     password: '',
   };
+=======
+
+>>>>>>> Stashed changes
 
   const methods = useForm({
     resolver: zodResolver(SignInSchema),
-    defaultValues,
+   
   });
 
   const {
@@ -68,10 +73,14 @@ export function JwtSignInView() {
     try {
      const res =  await signInWithPassword({ email: data.email, password: data.password });
      console.log(res,"res:")
+     
      if(res.status===200){
       // router.push('/dashboard/file-manager');
+      toast.success('User login successfully')
       await checkUserSession?.();
       router.refresh();
+     }else{
+      toast.error('Something went wrong')
      }
       // await checkUserSession?.();
 
@@ -89,7 +98,7 @@ export function JwtSignInView() {
       <Box gap={1.5} display="flex" flexDirection="column">
         <Link
           component={RouterLink}
-          href="#"
+          href={paths.auth.jwt.forgotPassword}
           variant="body2"
           color="inherit"
           sx={{ alignSelf: 'flex-end' }}
@@ -100,7 +109,7 @@ export function JwtSignInView() {
         <Field.Text
           name="password"
           label="Password"
-          placeholder="6+ characters"
+          placeholder="8+ characters"
           type={password.value ? 'text' : 'password'}
           InputLabelProps={{ shrink: true }}
           InputProps={{

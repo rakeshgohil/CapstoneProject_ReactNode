@@ -354,8 +354,8 @@ export function FileManagerTableRow({ row, selected, onSelectRow, onDeleteRow })
 
   const handleCopy = useCallback(() => {
     toast.success('Copied!');
-    copy(row.url);
-  }, [copy, row.url]);
+    copy(row.secretpart);
+  }, [copy, row.secretpart]);
 
   // Function to open the download dialog
   const handleOpenDownloadDialog = (file) => {
@@ -432,7 +432,7 @@ export function FileManagerTableRow({ row, selected, onSelectRow, onDeleteRow })
         </TableCell>
 
         <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
-          {row.type}
+          {row.type.toUpperCase().slice(1, row.type.length)}
         </TableCell>
 
         <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
@@ -493,7 +493,7 @@ export function FileManagerTableRow({ row, selected, onSelectRow, onDeleteRow })
             }}
           >
             <Iconify icon="eva:link-2-fill" />
-            Copy Link
+            Copy Token
           </MenuItem>
 
           <MenuItem

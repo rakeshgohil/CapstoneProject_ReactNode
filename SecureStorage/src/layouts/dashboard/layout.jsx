@@ -151,7 +151,7 @@ export function DashboardLayout({ sx, children, header, data }) {
                 )}
                 {/* -- Workspace popover -- */}
                 <Logo />
-                <Typography variant="h4" style={{ marginLeft: '10px' }}>Secure cloud storage</Typography>
+                <Typography variant="h4" style={{ marginLeft: '30px' }}>Secure cloud storage</Typography>
 
                 {/* <WorkspacesPopover
                   data={_workspaces}
@@ -174,9 +174,9 @@ export function DashboardLayout({ sx, children, header, data }) {
                   ]}
                 /> */}
                 {/* -- Notifications popover -- */}
-                <NotificationsDrawer data={_notifications} />
+                {/* <NotificationsDrawer data={_notifications} /> */}
                 {/* -- Contacts popover -- */}
-                <ContactsPopover data={_contacts} />
+                <ContactsPopover/>
                 {/* -- Settings button -- */}
                 {/* <SettingsButton /> */}
                 {/* -- Account drawer -- */}

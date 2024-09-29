@@ -29,26 +29,26 @@ export function ResultItem({ title, path, groupLabel, onClickItem }) {
       }}
     >
       <ListItemText
-        primaryTypographyProps={{ typography: 'subtitle2', sx: { textTransform: 'capitalize' } }}
-        secondaryTypographyProps={{ typography: 'caption', noWrap: true }}
-        primary={title.map((part, index) => (
-          <Box
-            key={index}
-            component="span"
-            sx={{ color: part.highlight ? 'primary.main' : 'text.primary' }}
-          >
-            {part.text}
-          </Box>
-        ))}
-        secondary={path.map((part, index) => (
-          <Box
-            key={index}
-            component="span"
-            sx={{ color: part.highlight ? 'primary.main' : 'text.secondary' }}
-          >
-            {part.text}
-          </Box>
-        ))}
+        // primaryTypographyProps={{ typography: 'subtitle2', sx: { textTransform: 'capitalize' } }}
+        // secondaryTypographyProps={{ typography: 'caption', noWrap: true }}
+        // primary={title.map((part, index) => (
+        //   <Box
+        //     key={index}
+        //     component="span"
+        //     sx={{ color: part.highlight ? 'primary.main' : 'text.primary' }}
+        //   >
+        //     {part.text}
+        //   </Box>
+        // ))}
+        // secondary={path.map((part, index) => (
+        //   <Box
+        //     key={index}
+        //     component="span"
+        //     sx={{ color: part.highlight ? 'primary.main' : 'text.secondary' }}
+        //   >
+        //     {part.text}
+        //   </Box>
+        // ))}
       />
 
       {groupLabel && <Label color="info">{groupLabel}</Label>}

@@ -54,8 +54,8 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, sx, ..
   }, []);
 
   const handleCopy = useCallback(() => {
-    // toast.success('Copied!');
-    // copy(file.url);
+    toast.success('Copied!');
+    copy(file.secretpart);
   }, []);
 
   const renderIcon = (
@@ -209,7 +209,7 @@ export function FileManagerFileItem({ file, selected, onSelect, onDelete, sx, ..
             }}
           >
             <Iconify icon="eva:link-2-fill" />
-            Copy Link
+            Copy Token
           </MenuItem>
 
       {    /* download button here */}

@@ -4,7 +4,11 @@
   // const cors = require('cors');
   import { setSession,setError,setErrorMessage} from './utils';
   import { STORAGE_KEY } from './constant';
+<<<<<<< Updated upstream
   import CryptoJS from 'crypto-js';
+=======
+  
+>>>>>>> Stashed changes
 
   /** **************************************
    * Sign in
@@ -29,8 +33,9 @@
       setSession(accessToken);
       return response
     } catch (error) {
-      // console.error('Error during sign in:', error);
-      // throw error;
+      console.error('Error during sign in:', error);
+      throw error;
+      setErrorMessage(error.error)
       return error
     }
   };
@@ -95,6 +100,7 @@
   };
 
   export const signUp = async ({ email, password, firstname, lastname }) => {
+<<<<<<< Updated upstream
     
     const hashedPassword = CryptoJS.SHA256(password).toString();
     const params = {
@@ -102,6 +108,13 @@
       password: hashedPassword,
       firstname: firstname,
       lastname: lastname
+=======
+    const params = {
+      email,
+      password,
+      firstname,
+      lastname
+>>>>>>> Stashed changes
     };
 
     try {
@@ -130,6 +143,41 @@
       throw error;
     }
   };
+
+
+  export const resetPassword = async ({ email, password }) => {
+    const params = {
+      email,
+      password
+    };
+
+    try {
+      // if (isPasswordValid(password)) {
+        
+        console.log('Rwara11111')
+        if ( password && email) {
+          try {
+            const response = await axios.post('http://localhost:5000/updatepassword', params);
+            console.log("Api called");
+            
+            console.log('response: ', response);
+            return response
+          } catch (error) {
+            console.error('Error changing user detail:', error);
+            return error
+          }
+        }
+      // } else {
+      //   // setErrorMessage('Password does not meet the required criteria.');
+      //   console.log("12")
+      // }
+
+    } catch (error) {
+      console.error('Error during changing password:', error);
+      throw error;
+    }
+  };
+
 
   /** **************************************
    * Sign out

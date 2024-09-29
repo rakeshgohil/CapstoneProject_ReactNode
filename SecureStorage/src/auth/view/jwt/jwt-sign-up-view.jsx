@@ -53,10 +53,17 @@ export function JwtSignUpView() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const defaultValues = {
+<<<<<<< Updated upstream
     firstName: 'test',
     lastName: 'user',
     email: 'test1@gmail.com',
     password: '123456',
+=======
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+>>>>>>> Stashed changes
   };
 
   const methods = useForm({
@@ -103,7 +110,7 @@ export function JwtSignUpView() {
       <Field.Text
         name="password"
         label="Password"
-        placeholder="6+ characters"
+        placeholder="8+ characters"
         type={password.value ? 'text' : 'password'}
         InputLabelProps={{ shrink: true }}
         InputProps={{

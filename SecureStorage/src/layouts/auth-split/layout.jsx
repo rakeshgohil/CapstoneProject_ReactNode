@@ -44,24 +44,24 @@ export function AuthSplitLayout({ sx, section, children, header }) {
               <>
                 {/* -- Logo -- */}
                 <Logo />
-                <Typography variant="h4" style={{marginLeft:'10px'}}>Secure cloud storage</Typography>
+                <Typography variant="h4" style={{marginLeft:'30px'}}>Secure cloud storage</Typography>
               </>
             ),
-            rightArea: (
-              <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 1.5 }}>
-                {/* -- Help link -- */}
-                <Link
-                  href={paths.faqs}
-                  component={RouterLink}
-                  color="inherit"
-                  sx={{ typography: 'subtitle2' }}
-                >
-                  Need help?
-                </Link>
-                {/* -- Settings button -- */}
-                {/* <SettingsButton /> */}
-              </Box>
-            ),
+            // rightArea: (
+            //   <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 1.5 }}>
+            //     {/* -- Help link -- */}
+            //     <Link
+            //       href={paths.faqs}
+            //       component={RouterLink}
+            //       color="inherit"
+            //       sx={{ typography: 'subtitle2' }}
+            //     >
+            //       Need help?
+            //     </Link>
+            //     {/* -- Settings button -- */}
+            //     {/* <SettingsButton /> */}
+            //   </Box>
+            // ),
           }}
         />
       }

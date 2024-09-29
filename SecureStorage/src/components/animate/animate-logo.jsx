@@ -49,7 +49,7 @@ export function AnimateLogo1({ logo, sx, ...other }) {
           position: 'absolute',
           width: 'calc(100% - 20px)',
           height: 'calc(100% - 20px)',
-          border: (theme) => `solid 3px ${varAlpha(theme.vars.palette.primary.darkChannel, 0.24)}`,
+          border: (theme) => `solid 3px grey`,
         }}
       />
 
@@ -66,7 +66,7 @@ export function AnimateLogo1({ logo, sx, ...other }) {
           width: 1,
           height: 1,
           position: 'absolute',
-          border: (theme) => `solid 8px ${varAlpha(theme.vars.palette.primary.darkChannel, 0.24)}`,
+          border: (theme) => `solid 8px grey`,
         }}
       />
     </Box>

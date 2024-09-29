@@ -12,12 +12,14 @@ export function FileManagerFiltersResult({ filters, onResetPage, totalResults, s
   const handleRemoveKeyword = useCallback(() => {
     onResetPage();
     filters.setState({ name: '' });
+    // console.log("inputeddddd",filters);
+
   }, [filters, onResetPage]);
 
   const handleRemoveTypes = useCallback(
     (inputValue) => {
       const newValue = filters.state.type.filter((item) => item !== inputValue);
-
+      
       onResetPage();
       filters.setState({ type: newValue });
     },

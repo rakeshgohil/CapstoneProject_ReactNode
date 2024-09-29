@@ -14,6 +14,8 @@ import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
 
 import { AuthProvider } from 'src/auth/context/jwt';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // ----------------------------------------------------------------------
 
@@ -51,6 +53,7 @@ export default async function RootLayout({ children }) {
               </MotionLazy>
             </ThemeProvider>
           </SettingsProvider>
+          <ToastContainer />
         </AuthProvider>
       </body>
     </html>

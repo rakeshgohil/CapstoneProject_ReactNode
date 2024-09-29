@@ -45,6 +45,8 @@ export function FileManagerTable({
   onDeleteRow,
   dataFiltered,
   onOpenConfirm,
+  search,
+  setSearch,
   ...other
 }) {
   const {
@@ -64,6 +66,7 @@ export function FileManagerTable({
     onChangeRowsPerPage,
   } = table;
   const [files, setFiles] = useState([])
+  const [tmpData, setTmpData] = useState([])
   useEffect(() => {
     onLoad()
   }, [])
@@ -73,24 +76,7 @@ export function FileManagerTable({
     axios.get(`http://localhost:5000/user-files/${loggedInUserId}`)
       .then(response => {
         setFiles(response.data);
-        // setFiles([{
-        //   "id": "e99f09a7-dd88-49d5-b1c8-1daf80c2d7b22_file",
-        //   "name": "cover-12.jpg",
-        //   "url": "/assets/images/mock/cover/cover-12.webp",
-        //   "shared": [],
-        //   "tags": [
-        //     "Technology",
-        //     "Health and Wellness",
-        //     "Travel",
-        //     "Finance",
-        //     "Education"
-        //   ],
-        //   "size": 2181818.1818181816,
-        //   "createdAt": "2024-08-26T07:44:23+10:00",
-        //   "modifiedAt": "2024-08-26T07:44:23+10:00",
-        //   "type": "jpg",
-        //   "isFavorited": false
-        // }])
+        setTmpData(response.data)
         console.log(response.data);
 
         // location.reload();
@@ -100,6 +86,11 @@ export function FileManagerTable({
         toast.error("Error fetching files")
       });
   }
+
+  useEffect(() => {
+    let lstTmp = [...tmpData].filter((obj) => obj.name.toLowerCase().includes(search.toLowerCase()))
+    setFiles(lstTmp)
+  }, [search])
 
   return (
     <>

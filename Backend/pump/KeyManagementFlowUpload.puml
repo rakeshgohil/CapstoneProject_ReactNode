@@ -1,0 +1,16 @@
+@startuml
+title Key Management Flow for File Upload
+
+partition "File Upload Process" {
+    :Start Upload Process;
+    :Generate Encryption Key;
+    :Encrypt File;
+    :Generate Random Secret;
+    :Store File Information in Database;
+    :Split Secret into 5 Shares;
+    :Encrypt Shares and Distribute across 5 Databases;
+    :Notify Users with Secret Parts;
+    :File Upload Completed;
+}
+@enduml
+

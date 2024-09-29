@@ -4,6 +4,7 @@
   // const cors = require('cors');
   import { setSession,setError,setErrorMessage} from './utils';
   import { STORAGE_KEY } from './constant';
+  import CryptoJS from 'crypto-js';
 
   /** **************************************
    * Sign in
@@ -12,7 +13,8 @@
     try {
       // Login logic
       console.log("ss")
-      const response = await axios.post('http://localhost:5000/login', { email: email, password: password },endpoints.auth.signIn);
+      const hashedPassword = CryptoJS.SHA256(password).toString();
+      const response = await axios.post('http://localhost:5000/login', { email: email, password: hashedPassword }, endpoints.auth.signIn);
       localStorage.setItem('email', email);
       localStorage.setItem('userid', response.data.userid);
       console.log("ss")
@@ -92,20 +94,21 @@
     return hasUpperCase && hasLowerCase && hasSpecialCharacter && hasMinLength;
   };
 
-  export const signUp = async ({ email, password, firstname, lastname, username }) => {
+  export const signUp = async ({ email, password, firstname, lastname }) => {
+    
+    const hashedPassword = CryptoJS.SHA256(password).toString();
     const params = {
-      email,
-      password,
-      firstname,
-      lastname,
-      username
+      email: email,
+      password: hashedPassword,
+      firstname: firstname,
+      lastname: lastname
     };
 
     try {
       // if (isPasswordValid(password)) {
         
         console.log('Rwara11111')
-        if (firstname && lastname && username && password && email) {
+        if (firstname && lastname && password && email) {
           try {
             const response = await axios.post('http://localhost:5000/register', params);
             

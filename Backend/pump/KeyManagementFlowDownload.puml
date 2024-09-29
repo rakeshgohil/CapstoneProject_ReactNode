@@ -1,0 +1,15 @@
+@startuml
+title Key Management Flow for File Download
+
+partition "File Download Process" {
+    :Start Download Process;
+    :Validate Provided Shares;
+    :Reconstruct Secret from Valid Shares;
+    :Retrieve Encryption Key from Database;
+    :Decrypt the Requested File;
+    :Send Decrypted File to User;
+    :File Download Completed;
+}
+@enduml
+
+

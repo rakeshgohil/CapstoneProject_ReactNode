@@ -31,7 +31,6 @@ import { SignUpTerms } from '../../components/sign-up-terms';
 export const SignUpSchema = zod.object({
   firstName: zod.string().min(1, { message: 'First name is required!' }),
   lastName: zod.string().min(1, { message: 'Last name is required!' }),
-  userName: zod.string().min(1, { message: 'User name is required!' }),
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
@@ -56,7 +55,6 @@ export function JwtSignUpView() {
   const defaultValues = {
     firstName: 'test',
     lastName: 'user',
-    userName: 'test1',
     email: 'test1@gmail.com',
     password: '123456',
   };
@@ -77,8 +75,7 @@ export function JwtSignUpView() {
         email: data.email,
         password: data.password,
         firstname: data.firstName,
-        lastname: data.lastName,
-        username: data.userName,
+        lastname: data.lastName
       });
       console.log(res, "res")
       if (res?.error) {
@@ -101,7 +98,6 @@ export function JwtSignUpView() {
         <Field.Text name="lastName" label="Last name" InputLabelProps={{ shrink: true }} />
       </Box>
 
-      <Field.Text name="userName" label="User name" InputLabelProps={{ shrink: true }} />
       <Field.Text name="email" label="Email address" InputLabelProps={{ shrink: true }} />
 
       <Field.Text

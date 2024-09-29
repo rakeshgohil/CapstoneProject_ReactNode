@@ -5,7 +5,8 @@ CREATE TABLE FileSecrets (
     SecretID INT IDENTITY(1,1) PRIMARY KEY,
     FileID INT FOREIGN KEY REFERENCES Files(FileID),    
     UserID INT FOREIGN KEY REFERENCES Users(UserID),  
-    SecretPart NVARCHAR(255),  -- The secret part
+    SecretPart NVARCHAR(255),
+	HmacSignature NVARCHAR(MAX),
     AssignedAt DATETIME DEFAULT GETDATE()
 );
 
@@ -15,8 +16,9 @@ GO
 CREATE TABLE FileSecrets (
     SecretID INT IDENTITY(1,1) PRIMARY KEY,
     FileID INT,    
-    UserID INT,  -- Email of the user who gets the secret part
-    SecretPart NVARCHAR(255),  -- The secret part
+    UserID INT,
+    SecretPart NVARCHAR(255),
+	HmacSignature NVARCHAR(MAX),
     AssignedAt DATETIME DEFAULT GETDATE()
 );
 
@@ -26,8 +28,9 @@ GO
 CREATE TABLE FileSecrets (
     SecretID INT IDENTITY(1,1) PRIMARY KEY,
     FileID INT,    
-    UserID INT,  -- Email of the user who gets the secret part
-    SecretPart NVARCHAR(255),  -- The secret part
+    UserID INT,
+    SecretPart NVARCHAR(255),
+	HmacSignature NVARCHAR(MAX),
     AssignedAt DATETIME DEFAULT GETDATE()
 );
 
@@ -37,8 +40,9 @@ GO
 CREATE TABLE FileSecrets (
     SecretID INT IDENTITY(1,1) PRIMARY KEY,
     FileID INT,    
-    UserID INT,  -- Email of the user who gets the secret part
-    SecretPart NVARCHAR(255),  -- The secret part
+    UserID INT,
+    SecretPart NVARCHAR(255),
+	HmacSignature NVARCHAR(MAX),
     AssignedAt DATETIME DEFAULT GETDATE()
 );
 
@@ -48,7 +52,8 @@ GO
 CREATE TABLE FileSecrets (
     SecretID INT IDENTITY(1,1) PRIMARY KEY,
     FileID INT,    
-    UserID INT,  -- Email of the user who gets the secret part
-    SecretPart NVARCHAR(255),  -- The secret part
+    UserID INT,
+    SecretPart NVARCHAR(255),
+	HmacSignature NVARCHAR(MAX),
     AssignedAt DATETIME DEFAULT GETDATE()
 );

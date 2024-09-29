@@ -1,7 +1,10 @@
+import hashlib
+import hmac
 import os
 import pyodbc
 from secretsharing import PlaintextToHexSecretSharer
 from config import Config
+from cryptography.fernet import Fernet
 
 
 class FileDownload:
@@ -14,7 +17,6 @@ class FileDownload:
     # Fetch files associated with the given user_id
     def get_user_files(self, user_id):
         try:
-
             fileIds =[]
             files =[]
             file_secrets = []
@@ -24,10 +26,6 @@ class FileDownload:
                 self.conn = pyodbc.connect(connection_string)
                 self.cursor = self.conn.cursor()
 
-                # query = '''
-                #     SELECT FileID FROM FileSecrets WHERE UserID = ?
-                # '''
-                
                 query = '''
                     SELECT FileID, SecretPart FROM FileSecrets WHERE UserID = ?
                 '''
@@ -43,30 +41,23 @@ class FileDownload:
                 placeholders = ','.join(['?'] * len(fileIds))
                 connection_string = f'{Config.CONNECTION_STRING};DATABASE={Config.DATABASE}'
                 self.conn = pyodbc.connect(connection_string)
-                self.cursor = self.conn.cursor()
-                
+                self.cursor = self.conn.cursor()                
                 
                 self.cursor.execute('SELECT UserID, FirstName, LastName, Email FROM Users')
                 users = self.cursor.fetchall()
                 
                 query = f'''
-                    SELECT FileID, FileName, FilePath, UploadedAt, SharedUserIDs FROM Files WHERE FileID IN ({placeholders})
+                    SELECT FileID, FileName, FilePath, UploadedAt, SharedUserIDs, EncryptionKey, HmacKey 
+                    FROM Files WHERE FileID IN ({placeholders})
                 '''
 
                 self.cursor.execute(query, fileIds)
                 result = self.cursor.fetchall()
-                
-                
-                for row in result:
-                    
+                                
+                for row in result:                    
                     _, file_extension = os.path.splitext(row[1])
-                    # file_extension = file_extension.replace('.', '').upper()
-                    
-                    # "shared": row[4],
                     shared_user_ids = [int(user_id.strip()) for user_id in row[4].split(',')]
-                    
 
-                    # Step 4: Filter the `users` list for the shared users
                     shared_users = [
                         {
                             "id": user[0],  # UserID
@@ -78,47 +69,137 @@ class FileDownload:
                         for user in users if user[0] in shared_user_ids
                     ]
                     secret_part = next((file["secretPart"] for file in file_secrets if file["fileId"] == row[0]), None)
-                    files.append({"isFavorited": False, "id": row[0], "secretpart":secret_part, "name": row[1], "type":file_extension, "url": row[2], "createdAt": row[3], "modifiedAt": row[3], "size":0, "shared": shared_users, "tags": ["Technology", "Health and Wellness", "Travel", "Finance", "Education"],})        
-
+                    files.append({"isFavorited": False, "id": row[0], "secretpart":secret_part, "name": row[1], "type":file_extension, "url": row[2], "createdAt": row[3], "modifiedAt": row[3], "size":0, "shared": shared_users, "tags": ["Technology", "Health and Wellness", "Travel", "Finance", "Education"],})
 
             return files        
         			
-        except pyodbc.Error as e:
-            
+        except Exception as e:
+            print(e)
             return {"error": str(e)}, 500
-        
     # Validate the shares and reconstruct the secret
     def validate_shares(self, fileId, shares):
-        # Fetch the file's original secret from the database
-        original_secret = self.get_file_secret(fileId)
-
-        # Reconstruct the secret from the provided shares
         try:
-            reconstructed_secret = PlaintextToHexSecretSharer.recover_secret(shares)
+            _, encryption_key, hmac_key = self.get_file_info(fileId)
+            query = '''
+                SELECT SecretPart, HmacSignature FROM FileSecrets WHERE FileID = ?
+            '''
+            isValidShare = False
+            for share in shares:                
+                isValidShare = False
+                for i in range(5):                    
+                    connection_string = f'{Config.CONNECTION_STRING};DATABASE={self.databases[i]}'
+                    self.conn = pyodbc.connect(connection_string)
+                    self.cursor = self.conn.cursor()
+                    self.cursor.execute(query, fileId)
+                    result = self.cursor.fetchone()
+                    
+                    if result:
+                        valid_hmac = hmac.new(hmac_key.encode(), share.encode('utf-8'), hashlib.sha256).hexdigest()
+                        if hmac.compare_digest(result[1], valid_hmac):
+                            isValidShare = True
+                            break
+
+                if isValidShare == False:
+                    raise ValueError("Share validation failed! Secret mismatch.!")
+                                                 
+            original_secret = self.get_file_secret(fileId, encryption_key)
+            reconstructed_secret = PlaintextToHexSecretSharer.recover_secret([share for share in shares])
+            original_secret_str = str(original_secret).zfill(8)
+            reconstructed_secret_str = str(reconstructed_secret).zfill(8) 
             
-            return reconstructed_secret == original_secret
-        except Exception as e:
-            
+            return original_secret_str == reconstructed_secret_str
+        
+        except Exception as e:            
+            print(e)
             return False
         
     # Fetch the file secret from the database
-    def get_file_secret(self, file_id):
+    def get_file_secret(self, file_id, encryption_key):
         query = '''
             SELECT Secret FROM Files WHERE FileID = ?
         '''
+        connection_string = f'{Config.CONNECTION_STRING};DATABASE={Config.DATABASE}'            
+        self.conn = pyodbc.connect(connection_string)
+        self.cursor = self.conn.cursor()
         self.cursor.execute(query, file_id)
         result = self.cursor.fetchone()
-        return result[0] if result else None
+
+        if result:
+            encrypted_secret = result[0]
+            cipher = Fernet(encryption_key)
+            file_secret = cipher.decrypt(encrypted_secret.encode('utf-8')).decode('utf-8')   
+            return str(file_secret)        
+        return None
 
     # Fetch the file path based on the file_id
-    def get_file_path(self, file_id):
+    def get_file_info(self, file_id):
         query = '''
-            SELECT FilePath FROM Files WHERE FileID = ?
+            SELECT FilePath, EncryptionKey, HmacKey FROM Files WHERE FileID = ?
         '''
         self.cursor.execute(query, file_id)
         result = self.cursor.fetchone()
         if result:
-            return result[0]  # Return the file path
+            return result[0], result[1], result[2] 
         else:
             raise Exception("File not found")
         
+    
+    def get_file_secret_foruser(self, file_id, user_id):
+        _, encryption_key, _ = self.get_file_info(file_id)
+
+        query = '''
+            SELECT SecretPart FROM FileSecrets WHERE FileID = ? AND UserID = ?
+        '''
+    
+        for i in range(5):
+            connection_string = f'{Config.CONNECTION_STRING};DATABASE={self.databases[i]}'
+    
+            self.conn = pyodbc.connect(connection_string)
+            self.cursor = self.conn.cursor()
+
+            self.cursor.execute(query, file_id, user_id)
+            result = self.cursor.fetchone()
+
+            if result:
+                fernet = Fernet(encryption_key)
+                decrypted_data = fernet.decrypt(result[0])
+                return decrypted_data
+
+    def decrypt_file(self, file_path, encryption_key):
+        """Decrypt the file using Fernet symmetric encryption."""
+        try:
+            with open(file_path, 'rb') as encrypted_file:
+                encrypted_data = encrypted_file.read()
+
+            fernet = Fernet(encryption_key)
+            decrypted_data = fernet.decrypt(encrypted_data)
+
+            # Save the decrypted file
+            base_name = os.path.splitext(file_path)[0]  # Remove only the last extension    
+            decrypted_file_path = base_name + "_decrypted" + os.path.splitext(file_path)[1]
+
+            with open(decrypted_file_path, 'wb') as decrypted_file:
+                decrypted_file.write(decrypted_data)
+
+            return decrypted_file_path
+
+        except Exception as e:
+            print(e)
+            raise Exception("File decryption failed")            
+
+    def download_file(self, file_id):
+        try:
+
+            file_path, encryption_key, _ = self.get_file_info(file_id)
+
+            # if not self.validate_shares(file_id, shares, hmac_key):
+            #     raise Exception("Invalid shares or HMAC validation failed")
+            
+            decrypted_file_path = self.decrypt_file(file_path, encryption_key)
+
+            # with open(decrypted_file_path, 'rb') as decrypted_file:
+            #     return decrypted_file.read()
+            return decrypted_file_path
+        
+        except Exception as e:
+            raise Exception("Error decrypting the file")

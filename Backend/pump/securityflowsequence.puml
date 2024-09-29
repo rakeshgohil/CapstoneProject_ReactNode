@@ -1,0 +1,44 @@
+@startuml
+title Security Flow for Key Management and User Authentication
+
+participant "User" as U
+participant "FileUpload" as FU
+participant "FileDownload" as FD
+participant "NotificationService" as NS
+participant "Database" as DB
+participant "SMTP Server" as SMTP
+
+' User Registration Process
+U -> U: Registers (FirstName, LastName, Password, Email)
+U -> User: Hashes Password using bcrypt
+User -> DB: Stores User Info (Email, Hashed Password)
+User <-- DB: Confirmation of Registration
+
+' File Upload Process
+U -> FU: Uploads File and User IDs
+FU -> FU: Generate Encryption Key
+FU -> FU: Encrypt File
+FU -> FU: Generate Random Secret
+FU -> DB: Store Encrypted File Info (FileName, Path, Secret, EncryptionKey, HmacKey)
+FU -> FU: Split Secret into 5 Shares
+FU -> DB: Store Encrypted Secret Shares across 5 Databases
+FU -> NS: Notify Users with Secret Shares
+NS -> SMTP: Send Email with Secret and File Info
+SMTP --> U: Email Confirmation with Secret Part
+
+' File Download Process
+U -> FD: Request File Download
+FD -> U: Collect Secret Shares (at least 3)
+FD -> FD: Validate Secret Shares using HMAC
+FD -> FD: Reconstruct Original Secret
+FD -> DB: Retrieve Encryption Key and File Info
+FD -> FD: Decrypt File
+FD --> U: Send Decrypted File
+
+' User Login Process
+U -> User: Attempts Login (Email, Password)
+User -> DB: Fetch Stored Hashed Password
+User -> User: Verify Password using bcrypt
+User --> U: Login Success or Failure
+
+@enduml

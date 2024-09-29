@@ -1,0 +1,41 @@
+@startuml
+title Security Flowchart for Key Management and User Authentication
+
+start
+
+:User Registration;
+-> "Hash password with bcrypt";
+-> "Store user details (hashed password) in Database";
+
+if (File Upload) then (yes)
+    :Generate Encryption Key;
+    :Encrypt the File;
+    :Generate Random Secret;
+    :Store Encrypted File Info (FileName, Path, Secret, EncryptionKey, HMAC Key) in Database;
+    :Split Secret into 5 Shares;
+    :Store Encrypted Secret Shares across 5 Databases;
+    :Notify Users with Secret Parts;
+else (no)
+    :No File Upload;
+endif
+
+if (File Download) then (yes)
+    :Validate Secret Shares from Users;
+    :Reconstruct Original Secret (using 3 shares);
+    :Retrieve Encryption Key from Database;
+    :Decrypt File;
+    :Send Decrypted File to User;
+else (no)
+    :No File Download;
+endif
+
+if (User Login) then (yes)
+    :Fetch Hashed Password from Database;
+    :Verify Password with bcrypt;
+    :Grant Access on Successful Login;
+else (no)
+    :Login Process Ended;
+endif
+
+end
+@enduml

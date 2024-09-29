@@ -1,0 +1,56 @@
+@startuml
+title Class Diagram for Key Management System
+
+class FileUpload {
+    - databases : List[String]
+    - encryption_key : String
+    - cipher : Fernet
+    - hmac_key : String
+    + save_file_and_generate_secret(file, userids, userid) : dict
+    + save_file_secret(fileid, userids, secret, filename) : dict
+}
+
+class FileDownload {
+    - databases : List[String]
+    + get_user_files(user_id) : List[Dict]
+    + validate_shares(fileId, shares) : bool
+    + get_file_secret(file_id, encryption_key) : String
+    + get_file_info(file_id) : Tuple
+    + get_file_secret_foruser(file_id, user_id) : String
+    + decrypt_file(file_path, encryption_key) : String
+    + download_file(file_id) : String
+}
+
+class User {
+    - conn : pyodbc.Connection
+    - cursor : pyodbc.Cursor
+    + create_user(firstname, lastname, password, email) : dict
+    + update_user(firstname, lastname, email) : dict
+    + update_password(password, email) : dict
+    + login_user(email, password) : dict
+    + get_all_users() : List[Dict]
+    + hash_password(password) : String
+    + verify_password(plain_password, hashed_password) : bool
+}
+
+class NotificationService {
+    - smtp_server : String
+    - smtp_port : int
+    - email_address : String
+    - email_password : String
+    + notify_user(recipient_email, file_name, secret) : None
+    + send_email(recipient_email, subject, body) : None
+}
+
+class Database {
+    + execute_query(query, params) : Any
+    + commit() : None
+}
+
+FileUpload --> NotificationService : uses
+FileUpload --> Database : stores data in
+FileDownload --> Database : retrieves data from
+User --> Database : manages users
+NotificationService --> SMTP_Server : sends notifications
+
+@enduml

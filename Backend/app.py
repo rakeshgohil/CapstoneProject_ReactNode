@@ -16,57 +16,70 @@ file_download = FileDownload()
 
 @app.route('/register', methods=['POST'])
 def register_user():
-    data = request.json
-    firstname = data.get('firstname')
-    lastname = data.get('lastname')
-    password = data.get('password')
-    email = data.get('email')
-    
-    if not firstname or not lastname or not password or not email:
-        return jsonify({"error": "All fields are required"}), 400
+    try:
+        data = request.json
+        firstname = data.get('firstname')
+        lastname = data.get('lastname')
+        password = data.get('password')
+        email = data.get('email')
+        
+        if not firstname or not lastname or not password or not email:
+            return jsonify({"error": "All fields are required"}), 400
 
-    response, status = user_model.create_user(firstname, lastname, password, email)
-    return jsonify(response), status
-
+        response, status = user_model.create_user(firstname, lastname, password, email)
+        return jsonify(response), status
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/updateuser', methods=['POST'])
 def update_user():
-    data = request.json
-    firstname = data.get('firstname')
-    lastname = data.get('lastname')
-    email = data.get('email')
-    
-    if not firstname or not lastname or not email:
-        return jsonify({"error": "All fields are required"}), 400
+    try:
+        data = request.json
+        firstname = data.get('firstname')
+        lastname = data.get('lastname')
+        email = data.get('email')
+        
+        if not firstname or not lastname or not email:
+            return jsonify({"error": "All fields are required"}), 400
 
-    response, status = user_model.update_user(firstname, lastname, email)
-    return jsonify(response), status
-
+        response, status = user_model.update_user(firstname, lastname, email)
+        return jsonify(response), status
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/updatepassword', methods=['POST'])
 def update_password():
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
-    
-    if not password or not email:
-        return jsonify({"error": "All fields are required"}), 400
+    try:
+        data = request.json
+        email = data.get('email')
+        password = data.get('password')
+        
+        if not password or not email:
+            return jsonify({"error": "All fields are required"}), 400
 
-    response, status = user_model.update_password(password, email)
-    return jsonify(response), status
-
+        response, status = user_model.update_password(password, email)
+        return jsonify(response), status
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/login', methods=['POST'])
 def login_user():
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
+    try:
+        data = request.json
+        email = data.get('email')
+        password = data.get('password')
 
-    if not email or not password:
-        return jsonify({"error": "email and password are required"}), 400
+        if not email or not password:
+            return jsonify({"error": "email and password are required"}), 400
 
-    response, status = user_model.login_user(email, password)
-    return jsonify(response), status
+        response, status = user_model.login_user(email, password)
+        return jsonify(response), status
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -74,23 +87,29 @@ def get_users():
         users = user_model.get_all_users()  # Assuming `get_all_users()` is implemented in the User class
         return jsonify(users), 200
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    if 'file' not in request.files or 'userids' not in request.form or 'userid' not in request.form:
-        return jsonify({"error": "File and users are required"}), 400
-    
-    file = request.files['file']
-    userids = request.form['userids']
-    userid = request.form['userid']  # Logged-in user ID
+    try:
+        if 'file' not in request.files or 'userids' not in request.form or 'userid' not in request.form:
+            return jsonify({"error": "File and users are required"}), 400
+        
+        file = request.files['file']
+        userids = request.form['userids']
+        userid = request.form['userid']  # Logged-in user ID
 
-    if len(userids.split(',')) != 5:
-        return jsonify({"error": "Exactly 5 users are required"}), 400
+        if len(userids.split(',')) != 5:
+            return jsonify({"error": "Exactly 5 users are required"}), 400
 
-    # Call the function to save the file and generate the secret
-    response, status = file_upload.save_file_and_generate_secret(file, userids, userid)
-    return jsonify(response), status
+        # Call the function to save the file and generate the secret
+        response, status = file_upload.save_file_and_generate_secret(file, userids, userid)
+        return jsonify(response), status
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
 
 # Route to fetch files associated with the logged-in user
 @app.route('/user-files/<int:user_id>', methods=['GET'])
@@ -100,6 +119,7 @@ def get_user_files(user_id):
         files = file_download.get_user_files(user_id)
         return jsonify(files), 200
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
 
 # Route to validate shares before allowing the download
@@ -116,16 +136,27 @@ def validate_shares():
         else:
             return jsonify({"valid": False}), 400
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
     
 # Route to download the file if shares are valid
 @app.route('/download/<int:file_id>', methods=['GET'])
 def download_file(file_id):
     try:
-        file_path = file_download.get_file_path(file_id)
+        file_path = file_download.download_file(file_id)
         return send_file(file_path, as_attachment=True)
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/getusersecret/<int:file_id>/<int:user_id>', methods=['GET'])
+def get_user_secert(file_id, user_id):
+    try:
+        return file_download.get_file_secret_foruser(file_id, user_id)
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500    
     
 if __name__ == '__main__':
     app.run(debug=True)

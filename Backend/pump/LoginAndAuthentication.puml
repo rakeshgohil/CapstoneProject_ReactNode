@@ -1,0 +1,25 @@
+@startuml
+title User Login and Authentication
+
+actor User as U
+
+U -> "Login Page" : Enters email and password
+"Login Page" -> User : Send login request with email and password
+User -> DB : Fetch hashed password from Users table
+DB --> User : Return PasswordHash, UserId, FirstName, LastName
+
+alt User exists in DB
+    User -> "bcrypt.verify_password()" : Compare entered password with stored hash
+    alt Password is valid
+        "bcrypt.verify_password()" --> User : Password matches
+        User -> U : Return success message with UserId, FirstName, LastName
+    else Password is invalid
+        "bcrypt.verify_password()" --> User : Password doesn't match
+        User -> U : Return error "Invalid email or password"
+    end
+else User does not exist in DB
+    DB --> User : No matching user
+    User -> U : Return error "Invalid email or password"
+end
+
+@enduml

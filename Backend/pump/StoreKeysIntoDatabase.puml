@@ -1,0 +1,31 @@
+@startuml
+title File Upload Secret Sharing
+
+participant "User" as A
+participant "File Encryption (Fernet)" as B
+participant "Generate Secret" as C
+participant "DB1 - Save Secret Part 1" as D1
+participant "DB2 - Save Secret Part 2" as D2
+participant "DB3 - Save Secret Part 3" as D3
+participant "DB4 - Save Secret Part 4" as D4
+participant "DB5 - Save Secret Part 5" as D5
+participant "Notification Sent to Users" as E
+participant "User Retrieves File" as F
+participant "Reconstruct Secret and Decrypt File" as G
+
+A -> B : Step 1: Encrypt File
+B -> C : Step 2: Generate Secret
+C -> D1 : Step 3: Store Secret Part 1 in DB1
+C -> D2 : Step 3: Store Secret Part 2 in DB2
+C -> D3 : Step 3: Store Secret Part 3 in DB3
+C -> D4 : Step 3: Store Secret Part 4 in DB4
+C -> D5 : Step 3: Store Secret Part 5 in DB5
+D1 -> E : Step 4: Notify Users of Secret Part 1
+D2 -> E : Step 4: Notify Users of Secret Part 2
+D3 -> E : Step 4: Notify Users of Secret Part 3
+D4 -> E : Step 4: Notify Users of Secret Part 4
+D5 -> E : Step 4: Notify Users of Secret Part 5
+F -> G : Step 5: Reconstruct Secret
+G -> A : Step 6: Decrypt File
+
+@enduml
